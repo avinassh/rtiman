@@ -161,7 +161,9 @@ class LoginHandler(BaseHandler):
             return
 
         # login successful
-        self.set_secure_cookie('rtiman', username)    
+        credits = str(user_doc.get('credits', None))
+        self.set_secure_cookie('rtiman', username)
+        self.set_secure_cookie('credits', credits)    
         self.redirect('/')
 
 
@@ -183,7 +185,8 @@ class SignupHandler(BaseHandler):
             return
 
         # login successful
-        self.set_secure_cookie('rtiman', username)    
+        self.set_secure_cookie('rtiman', username)
+        self.set_secure_cookie('credits', '100')    
         self.redirect('/')
 
 class LogoutHandler(BaseHandler):
