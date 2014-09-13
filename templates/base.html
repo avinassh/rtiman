@@ -1,0 +1,59 @@
+<html>	 
+<head>
+	<title>{% block title %}RTI Man{% end %}</title>
+	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/flatly/bootstrap.min.css" />
+	<link rel="stylesheet" href="{{ static_url("css/style.css") }}" />
+	{% block css-scripts %}{% end %}
+	{% block js-scripts-top %}{% end %}
+</head>
+<body>
+
+<div class="navbar navbar-default">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/">RTI Man</a>
+  </div>
+  <div class="navbar-collapse collapse navbar-responsive-collapse">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/rti">All RTIs</a></li>
+      <li><a href="/surprise">Surprise Me!</a></li>
+      <li><a href="/rti/new">Submit New RTI</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+    	{% block logged-in %}
+    	<li><a>My Credits: {{ 100 }}</a></li>
+    	<li><a href="/addcredits">Add Credits</a></li>
+    	<li><a href="/me">Profile</a></li>
+    	<li><a href="/logout">Logout</a></li>
+    	{% end %}
+    	{% block new-user %}
+    	<li><a href="/signup">Signup</a></li>
+    	<li><a href="/login">Login</a></li>
+    	{% end %}
+      </li>
+    </ul>
+  </div>
+</div>
+
+	<div id="container">
+		<header>
+			{% block header %}{% end %}
+		</header>
+		<div id="main">
+			<div id="content">
+				{% block body %}{% end %}
+			</div>
+		</div>
+		<footer>
+			{% block footer %}{% end %}
+		</footer>
+	</div>
+	<script src="{{ static_url("js/script.js") }}"></script>
+	<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	{% block js-scripts %}{% end %}
+	</body>
+</html>
