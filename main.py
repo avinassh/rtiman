@@ -55,6 +55,13 @@ class BaseHandler(tornado.web.RequestHandler):
         return bool(self.get_secure_cookie('rtiman'))
 
 
+class MainHandler(BaseHandler):
+    def get(self):
+        rti_db = self.application.db.rti
+        rti_doc = rti_db.find_one()
+        credits = self.get_secure_cookie('credits', None)
+        self.render('index.html', credits=credits, rti=rti_doc)          
+
 class UserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -65,7 +72,6 @@ class UserHandler(BaseHandler):
         result = '<p> username: %s and credits: %s </p>' % (username, user_doc['credits'])
 
         self.write(result)
-
 
 
 class RTIHandler(BaseHandler):
@@ -195,10 +201,6 @@ class LogoutHandler(BaseHandler):
         self.write('Bye!')
         #self.render('logout.html')
 
-
-class MainHandler(BaseHandler):
-    def get(self):
-        self.write('Welcome to RTI Man: Crowdsource the RTIs to get the info')          
 
 def main():
     tornado.options.parse_command_line()

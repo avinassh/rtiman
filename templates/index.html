@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="jumbotron">
+  <h1>Welcome to RTI Man</h1>
+  <p>RTI Man is a crowdfunding site of RTIs. It lets you submit a new RTI requests or fund existing ones. Think of it as Kickstarter for RTI queries. Registration is absolutely free!</p>
+  <p><a class="btn btn-primary btn-lg">Learn more</a></p>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+  	<h3>Last submited RTI details:</h3>
+	{% if rti %}
+	<div class="product-display" id="product-table-div">
+	        <table class="table table-bordered" id="product-table">
+	            <thead class="product-table-head">
+	                <tr>
+	                    <th>RTI Name</th>
+	                    <th>Fund Status</th>
+	                    <th>Fund Now</th>
+	                </tr>
+	            </thead>
+	            <tbody class="product-table-body">
+	            <tr>
+	                <td><a href="/rti/{{ str(rti['_id']) }}">{{ escape(rti['rti_name']) }}</a></td>
+	                <td>{{ str(rti['funds']) }}</td>
+	                <td><a href="/rti/fund/{{ str(rti['_id']) }}">Click Here</a></td>
+	            </tr>
+	            </tbody>
+	        </table>
+	    </div>
+	{% end %}
+	</div>
+
+  <div class="col-md-4">
+  	<h3>Success Stories:</h3>
+  		<p>RTI Man successfully funded an RTI about Mumbai Road. In 2014, one of the road was renamed to a bollywood's leading actress' father. RTI Men funded the RTI and we got the results in 15 days. Read the full story here. </p>
+  </div>
+  
+  <div class="col-md-4">
+  	<h3>Results:</h3>
+  	  	<h4>Successful RTI Requests:</h4>
+  		<div class="progress progress-striped">
+  			<div class="progress-bar progress-bar-success" style="width: 35%"></div>
+		</div>
+  		<h4>Successfully funded:</h4>
+  		<div class="progress progress-striped">
+  			<div class="progress-bar progress-bar-info" style="width: 60%"></div>
+		</div>
+		<h4>Funding required:</h4>
+		<div class="progress progress-striped">
+		  	<div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+		</div>
+  </div>
+</div>
+
+{% end %}
