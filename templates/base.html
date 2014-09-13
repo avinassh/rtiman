@@ -24,13 +24,12 @@
       <li><a href="/rti/new">Submit New RTI</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-    	{% block logged-in %}
-    	<li><a>My Credits: {{ 100 }}</a></li>
+    	{% if current_user %} 
+    	<li><a>My Credits: {{ credits }}</a></li>
     	<li><a href="/addcredits">Add Credits</a></li>
     	<li><a href="/me">Profile</a></li>
     	<li><a href="/logout">Logout</a></li>
-    	{% end %}
-    	{% block new-user %}
+    	{% else %}
     	<li><a href="/signup">Signup</a></li>
     	<li><a href="/login">Login</a></li>
     	{% end %}

@@ -19,15 +19,11 @@ from tornado.options import define, options
 
 import pymongo
 from pymongo import MongoClient
-import requests
-from bs4 import BeautifulSoup
 
 import settings
 from settings import MONGO_URL
-import utils
 
-
-define("port", default=8757, help="run on the given port", type=int)
+define("port", default=8000, help="run on the given port", type=int)
 
 # put your mongodb username and password 
 # "mongodb://username:password@staff.mongohq.com:someport/mongodb_name"
@@ -83,7 +79,8 @@ class AllRTIHandler(BaseHandler):
     def get(self):
         rti_db = self.application.db.rti
         rtis = list(rti_db.find({}))
-        self.render('rtis.html', rtis=rtis)
+        credits = self.get_secure_cookie('credits', None)
+        self.render('rtis.html', rtis=rtis, credits=credits)
 
 class FundRTIHandler(BaseHandler):
     @tornado.web.authenticated    
