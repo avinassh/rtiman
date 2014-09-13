@@ -41,7 +41,7 @@ class Application(tornado.web.Application):
             (r'/rti', AllRTIHandler), # post to submit a new rti
             (r'/rti/new', NewRTIHandler),
             (r'/rti/fund/(\w+)', FundRTIHandler),
-            (r'/rti/(\w+)', RTIHandler), # post to receive funds
+            (r'/rti/(\w+)', RTIDisplayHandler), # post to receive funds
             (r'/me', UserHandler),
         ]
         app_settings = settings.application_handler_setttings
@@ -66,15 +66,11 @@ class UserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         username = self.get_secure_cookie('rtiman')
-        user_db = self.application.db.users
-        user_doc = user_db.find_one({'username': username})
-
-        result = '<p> username: %s and credits: %s </p>' % (username, user_doc['credits'])
-
-        self.write(result)
+        credits = self.get_secure_cookie('credits')
+        self.render('me.html', username=username, credits=credits)
 
 
-class RTIHandler(BaseHandler):
+class RTIDisplayHandler(BaseHandler):
     def get(self, rti_id):
         rti_db = self.application.db.rti        
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})

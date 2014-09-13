@@ -23,7 +23,7 @@ body {
 	color: white;
 }
 
-#rti-info{
+#rti-info, #user-info{
 	margin: 3%;
 	padding: 3%;
 }
@@ -31,6 +31,10 @@ body {
 #rti-info p{
 	margin: 0.5%;
 	padding: 0.5%;
+}
+
+#user-info{
+	text-align: center;
 }
 
 @media (max-width: 980px) {
