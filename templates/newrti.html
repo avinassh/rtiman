@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block css-scripts %}
+<link rel='stylesheet' href="{{ static_url("css/nprogress.min.css") }}" />
+{% end %}
+
+{% block body %}
+
+<h1 id="welcome">Submit a new RTI request</h1>
+<form class="form-horizontal" action="/rti/new" method="post">
+  <fieldset>
+    <div class="form-group">
+      <label for="rti-name" class="col-lg-2 control-label">RTI Name</label>
+      <div class="col-lg-10">
+        <input type="text" class="form-control" name="rti-name" id="rti-name" maxlength="80" placeholder="Give a descriptive name for your RTI (80 chars)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="rti-text" class="col-lg-2 control-label">RTI Query</label>
+      <div class="col-lg-10">
+        <textarea class="form-control" rows="3" name="rti-text" id="rti-text" placeholder="Enter main application/questions here. Please try to give as much info possible."></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button class="btn btn-default">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+{% end %}
