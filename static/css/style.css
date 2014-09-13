@@ -1,0 +1,24 @@
+body {
+    padding: 1%;
+    margin: 0.5%;
+}
+
+.navbar-text{
+	float: none;
+}
+
+#welcome{
+	text-align: center;
+}
+
+#footer-text{
+	color: white;
+	float: none;
+	text-align: center;
+}
+
+@media (max-width: 980px) {
+    body {
+      padding-top: 0.2%;
+    }
+  }
