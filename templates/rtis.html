@@ -20,7 +20,7 @@
             <tr>
                 <td>{{ escape(rti['rti_name']) }}</td>
                 <td><a href="/rti/{{ str(rti['_id']) }}">Info</a></td>
-                <td>{{ str(rti['funds']) }}</td>
+                <td>{{ str(rti['funds']) }}%</td>
                 <td><a href="/rti/fund/{{ str(rti['_id']) }}">Fund</a></td>
             </tr>
             {% end %}

@@ -9,12 +9,28 @@ body {
 
 #welcome{
 	text-align: center;
+	margin-top: 3%;
+	margin-bottom: 3%
 }
 
 #footer-text{
 	color: white;
 	float: none;
 	text-align: center;
+}
+
+#credit-text{
+	color: white;
+}
+
+#rti-info{
+	margin: 3%;
+	padding: 3%;
+}
+
+#rti-info p{
+	margin: 0.5%;
+	padding: 0.5%;
 }
 
 @media (max-width: 980px) {

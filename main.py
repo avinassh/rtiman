@@ -78,7 +78,8 @@ class RTIHandler(BaseHandler):
     def get(self, rti_id):
         rti_db = self.application.db.rti        
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})
-        self.render('rti.html', rti_doc = rti_doc)
+        credits = self.get_secure_cookie('credits', None)
+        self.render('rti.html', rti_doc = rti_doc, credits=credits)
 
 
 class AllRTIHandler(BaseHandler):
@@ -91,6 +92,7 @@ class AllRTIHandler(BaseHandler):
 class FundRTIHandler(BaseHandler):
     @tornado.web.authenticated    
     def get(self, rti_id):
+        credits = self.get_secure_cookie('credits', None)
         user_db = self.application.db.users    
         username = self.get_secure_cookie('rtiman')
         user_doc = user_db.find_one({'username': username})
@@ -101,7 +103,7 @@ class FundRTIHandler(BaseHandler):
             self.write('You are trying to fund an non existant RTI #FML')
             return
 
-        self.render('fund.html', rti_doc=rti_doc, user_doc=user_doc)
+        self.render('fund.html', rti_doc=rti_doc, user_doc=user_doc, credits=credits)
 
     def post(self, rti_id):
         credits = self.get_argument('credits', None)
@@ -131,12 +133,14 @@ class FundRTIHandler(BaseHandler):
         user_db.save(user_doc)
         rti_db.save(rti_doc)
 
-        self.write('Success!')
+        self.set_secure_cookie('credits', str(user_doc['credits']))
+        self.redirect('/rti/%s' % rti_id)
 
 class NewRTIHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render('newrti.html')
+        credits = self.get_secure_cookie('credits', None)
+        self.render('newrti.html', credits=credits)
 
     def post(self):
         rti_name = self.get_argument('rti-name', None)
@@ -144,7 +148,7 @@ class NewRTIHandler(BaseHandler):
         rti_db = self.application.db.rti
         rti_id = str(rti_db.insert({'rti_name': rti_name, 'rti_summary': rti_summary, 'funds': 0}))
 
-        self.write("RTI request submitted successfully. View <a href='/rti/"+rti_id+"'>here</a>")
+        self.redirect('/rti/%s' % rti_id)
 
 
 class LoginHandler(BaseHandler):

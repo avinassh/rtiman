@@ -27,7 +27,7 @@
 		    </ul>
 		    <ul class="nav navbar-nav navbar-right">
 		    	{% if current_user %} 
-		    	<li><a>My Credits: {{ credits }}</a></li>
+		    	<li><p class="navbar-text" id="credit-text"> My Credits: {{ credits }}</p></li>
 		    	<li><a href="/addcredits">Add Credits</a></li>
 		    	<li><a href="/me">Profile</a></li>
 		    	<li><a href="/logout">Logout</a></li>

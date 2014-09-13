@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1 id="welcome">Fund an RTI!</h1>
+
+<form class="form-horizontal" method="post">
+  <fieldset>
+    <div class="form-group">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-10">
+  		<p> You are going to fund: <strong>{{ rti_doc['rti_name'] }}</strong>, for more info please check <a href="/rti/{{ str(rti_doc['_id']) }}" target="_BLANK">here</a> </p>
+		<p> You currently have <strong>{{ user_doc['credits'] }}</strong> credits in your account.</p>
+	</div>	
+	</div>
+    <div class="form-group">
+      <label for="rti-name" class="col-lg-2 control-label">Credits</label>
+      <div class="col-lg-10">
+        <input type="number" class="form-control" name="credits" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button class="btn btn-default">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+{% end %}
