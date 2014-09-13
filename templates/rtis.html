@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1 id="welcome">List of all RTIs which require funding:</h1>
+
+{% if rtis %}
+<div class="product-display" id="product-table-div">
+        <table class="table table-bordered" id="product-table">
+            <thead class="product-table-head">
+                <tr>
+                    <th>RTI Name</th>
+                    <th>Info</th>
+                    <th>Fund Status</th>
+                    <th>Fund Now</th>
+                </tr>
+            </thead>
+            <tbody class="product-table-body">
+            {% for rti in rtis %}
+            <tr>
+                <td>{{ escape(rti['rti_name']) }}</td>
+                <td><a href="/rti/{{ str(rti['_id']) }}">Info</a></td>
+                <td>{{ str(rti['funds']) }}</td>
+                <td><a href="/rti/fund/{{ str(rti['_id']) }}">Fund</a></td>
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+    </div>
+{% end %}
+{% end %}
