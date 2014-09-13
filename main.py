@@ -202,8 +202,7 @@ class SignupHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_all_cookies()
-        self.write('Bye!')
-        #self.render('logout.html')
+        self.redirect('/')
 
 
 def main():
