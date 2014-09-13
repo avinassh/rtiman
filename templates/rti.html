@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1 id="welcome">RTI Request Info:</h1>
+
+<div id='rti-info'>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>RTI Details:</h2>
+            <p> <strong>RTI name:</strong> {{ rti_doc['rti_name'] }} </p>
+            <p> <strong>RTI query details:</strong> {{ rti_doc['rti_summary'] }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Fund Status:</h2>
+            <p> <strong>Total fund received:</strong> {{ rti_doc['funds']}}%</p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-success" style="width: {{ rti_doc['funds'] }}%"></div>
+            </div>
+            <a href="/rti/fund/{{ str(rti_doc['_id']) }}" class="btn btn-primary btn-lg">Fund Now!</a>
+        </div>
+    </div>
+</div>
+
+{% end %}
