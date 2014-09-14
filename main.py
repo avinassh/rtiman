@@ -48,6 +48,7 @@ class Application(tornado.web.Application):
             (r'/rti/(\w+)', RTIDisplayHandler),
             (r'/surprise', RandomRTIHandler),
             (r'/me', UserHandler),
+            (r'/addcredits', CreditsHandler)
         ]
         app_settings = settings.application_handler_setttings
         conn = pymongo.MongoClient(MONGO_URL)
@@ -176,6 +177,15 @@ class FundRTIHandler(BaseHandler):
         flash.data = {"class": "success", "msg": 'RTI funded successfully :-)'}
         self.set_secure_cookie('credits', str(user_doc['credits']))
         self.redirect('/rti/%s' % rti_id)
+
+
+class CreditsHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        flash = tornado_flash.Flash(self)
+        credits = self.get_secure_cookie('credits', None)
+        self.render('credits.html', credits=credits, flash=flash)
+
 
 class NewRTIHandler(BaseHandler):
     @tornado.web.authenticated

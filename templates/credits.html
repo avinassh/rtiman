@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1 id="welcome">Add Credits</h1>
+
+<form class="form-horizontal">
+  <fieldset>
+    <div class="form-group">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-10">
+      <p>You can easily add credits to you account. Please enter the password for authentication and the amount of credits you want. You will be redirected to payment gateway. And after successful payment confirmation (usually in seconds), credits will be added to your account. Happy funding!</p>
+    </div>  
+  </div>
+    <div class="form-group">
+      <label for="rti-name" class="col-lg-2 control-label">Credits</label>
+      <div class="col-lg-10">
+        <input type="number" class="form-control" name="credits" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password" class="col-lg-2 control-label">Password</label>
+      <div class="col-lg-10">
+        <input type="password" class="form-control" name="password" required>
+      </div>
+    </div>    
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button type="reset" class="btn btn-default">Cancel</button>
+        <button type="submit" class="btn btn-primary" disabled>Submit</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+<div class="jumbotron">
+  <p>That didn't quite work, right? Because RTI Man is just a proof of concept and it's not functional. Yet ;-)</p>
+  <h5>Want to make RTI man into a reality? <a href="" target="_BLANK">Read my full idea</a> or submit your <a href="" target="_BLANK">feedback</a>.</h5>
+</div>
+
+{% end %}
