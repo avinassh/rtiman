@@ -9,6 +9,8 @@
             <h2>RTI Details:</h2>
             <p> <strong>RTI name:</strong> {{ rti_doc['rti_name'] }} </p>
             <p> <strong>RTI query details:</strong> {{ rti_doc['rti_summary'] }}</p>
+            <br />
+            Share on: <a href="http://google.com" target="_BLANK" id="fb-share" class="btn btn-primary btn-xs">Facebook</a> <a href="#" target="_BLANK" id="twt-share" class="btn btn-primary btn-xs">Twitter</a>
         </div>
 
         <div class="col-md-6">
@@ -22,4 +24,16 @@
     </div>
 </div>
 
+{% end %}
+
+{% block js-scripts %}
+<script type="text/javascript">
+var fb_button = document.getElementById('fb-share')
+var base_url = "https://www.facebook.com/sharer/sharer.php?u="
+fb_button.attributes.href.value = base_url + document.URL
+
+var twt_button = document.getElementById('twt-share')
+var base_url = "https://twitter.com/intent/tweet?url="
+twt_button.attributes.href.value = base_url + document.URL
+</script>
 {% end %}
