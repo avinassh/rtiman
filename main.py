@@ -69,25 +69,28 @@ class MainHandler(BaseHandler):
 class UserHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
+        flash = tornado_flash.Flash(self)
         username = self.get_secure_cookie('rtiman')
         credits = self.get_secure_cookie('credits')
-        self.render('me.html', username=username, credits=credits)
+        self.render('me.html', username=username, credits=credits, flash=flash)
 
 
 class RTIDisplayHandler(BaseHandler):
     def get(self, rti_id):
+        flash = tornado_flash.Flash(self)
         rti_db = self.application.db.rti        
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})
         credits = self.get_secure_cookie('credits', None)
-        self.render('rti.html', rti_doc = rti_doc, credits=credits)
+        self.render('rti.html', rti_doc = rti_doc, credits=credits, flash=flash)
 
 
 class AllRTIHandler(BaseHandler):
     def get(self):
+        flash = tornado_flash.Flash(self)
         rti_db = self.application.db.rti
         rtis = list(rti_db.find({}))
         credits = self.get_secure_cookie('credits', None)
-        self.render('rtis.html', rtis=rtis, credits=credits)
+        self.render('rtis.html', rtis=rtis, credits=credits, flash=flash)
 
 class FundRTIHandler(BaseHandler):
     @tornado.web.authenticated    
@@ -101,12 +104,14 @@ class FundRTIHandler(BaseHandler):
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})
 
         if not rti_doc:
-            self.write('You are trying to fund an non existant RTI #FML')
+            flash.data = {"class": "warning", "msg": 'You are trying to fund an non existent RTI #FML'}
+            self.redirect('/rti')
             return
 
         self.render('fund.html', rti_doc=rti_doc, user_doc=user_doc, credits=credits, flash=flash)
 
     def post(self, rti_id):
+        flash = tornado_flash.Flash(self)
         credits = self.get_argument('credits', None)
         password = self.get_argument('password', None)
         passwordhash = hashlib.sha512(password).hexdigest()
@@ -117,25 +122,32 @@ class FundRTIHandler(BaseHandler):
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})
 
         if not credits:
-            self.write('Please enter how much you want to fund')
+            flash.data = {"class": "warning", "msg": 'Incorrect credit entered'}
+            self.redirect(self.request.uri)            
             return
 
         try:
             credits = int(credits)
         except ValueError:
-            self.write('Enter credits in numbers')
+            flash.data = {"class": "warning", "msg": 'Incorrect credit entered'}
+            self.redirect(self.request.uri)            
             return
 
         if user_doc['password'] != passwordhash:
             flash = tornado_flash.Flash(self)
-            flash.data = {"class": "warning", "msg": "WARNING!"}
+            flash.data = {"class": "danger", "msg": "Incorrect password"}
             self.redirect(self.request.uri)
-            # self.write("Invalid password, try again!")
             return
 
         if credits > user_doc['credits']:
-            self.write('You cannot fund more than credits you have. Please buy credits')
+            flash.data = {"class": "warning", "msg": 'You cannot fund more than credits you have. Please buy credits.'}
+            self.redirect(self.request.uri)            
             return
+
+        if credits < 9:
+            flash.data = {"class": "warning", "msg": 'Minimum fund value is 10.'}
+            self.redirect(self.request.uri)            
+            return        
 
         rti_doc['funds'] += credits
         user_doc['credits'] -= credits
@@ -143,27 +155,34 @@ class FundRTIHandler(BaseHandler):
         user_db.save(user_doc)
         rti_db.save(rti_doc)
 
+        flash.data = {"class": "success", "msg": 'RTI funded successfully :-)'}
         self.set_secure_cookie('credits', str(user_doc['credits']))
         self.redirect('/rti/%s' % rti_id)
 
 class NewRTIHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
+        flash = tornado_flash.Flash(self)
         credits = self.get_secure_cookie('credits', None)
-        self.render('newrti.html', credits=credits)
+        self.render('newrti.html', credits=credits, flash=flash)
 
     def post(self):
+        flash = tornado_flash.Flash(self)
         rti_name = self.get_argument('rti-name', None)
         rti_summary = self.get_argument('rti-text', None)
         rti_db = self.application.db.rti
         rti_id = str(rti_db.insert({'rti_name': rti_name, 'rti_summary': rti_summary, 'funds': 0}))
-
+        flash.data = {"class": "info", "msg": "RTI query request submitted successfully. Share it in social media."} 
         self.redirect('/rti/%s' % rti_id)
 
 
 class LoginHandler(BaseHandler):
     def get(self):
         flash = tornado_flash.Flash(self)
+        if self.get_current_user():
+            flash.data = {"class": "warning", "msg": "You are already logged in!"}
+            self.redirect('/')
+            return
         self.render('login.html', flash=flash)
 
     def post(self):
@@ -175,12 +194,11 @@ class LoginHandler(BaseHandler):
         user_doc = user_db.find_one({'username': username})
 
         if not user_doc:
-            self.write("You are not registered yet! <a href='/signup'>Signup</a> now!")
+            flash.data = {"class": "warning", "msg": "Username not found, may be you wanted to register?"} 
+            self.redirect('/signup')
             return
             
         if user_doc['password'] != passwordhash:
-            #self.write("Invalid password, <a href='/login'>try</a> again")
-            #return
             flash.data = {"class": "danger", "msg": "Invalid password!"} 
             self.redirect('/login')
             return
@@ -195,9 +213,16 @@ class LoginHandler(BaseHandler):
 
 class SignupHandler(BaseHandler):
     def get(self):
-        self.render('signup.html')
+        flash = tornado_flash.Flash(self)
+        if self.get_current_user():
+            flash.data = {"class": "warning", "msg": "You are already logged in!"}
+            self.redirect('/')
+            return
+
+        self.render('signup.html', flash=flash)
 
     def post(self):
+        flash = tornado_flash.Flash(self)
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
         passwordhash = hashlib.sha512(password).hexdigest()
@@ -207,16 +232,20 @@ class SignupHandler(BaseHandler):
             user_db.insert({'username': username, 'password': passwordhash, 
                 'credits': 100})
         except pymongo.errors.DuplicateKeyError:
-            self.write("Username already exists! <a href='/signup'>Try</a> again!")
+            flash.data = {"class": "danger", "msg": "Username already exists!"}
+            self.redirect('/signup')  
             return
 
         # login successful
+        flash.data = {"class": "success", "msg": "Signup successful, Welcome to RTI Man!"}
         self.set_secure_cookie('rtiman', username)
         self.set_secure_cookie('credits', '100')    
         self.redirect('/')
 
 class LogoutHandler(BaseHandler):
     def get(self):
+        flash = tornado_flash.Flash(self)
+        flash.data = {"class": "success", "msg": "Bye Bye, Have a nice day!"}
         self.clear_all_cookies()
         self.redirect('/')
 
