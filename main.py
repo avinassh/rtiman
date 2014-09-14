@@ -4,6 +4,7 @@ import datetime
 import os.path # for template and static files
 import json
 import hashlib # for passwords
+import random
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 
@@ -41,10 +42,11 @@ class Application(tornado.web.Application):
             (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
             (r'/signup', SignupHandler),
-            (r'/rti', AllRTIHandler), # post to submit a new rti
+            (r'/rti', AllRTIHandler),
             (r'/rti/new', NewRTIHandler),
             (r'/rti/fund/(\w+)', FundRTIHandler),
-            (r'/rti/(\w+)', RTIDisplayHandler), # post to receive funds
+            (r'/rti/(\w+)', RTIDisplayHandler),
+            (r'/surprise', RandomRTIHandler),
             (r'/me', UserHandler),
         ]
         app_settings = settings.application_handler_setttings
@@ -80,6 +82,22 @@ class RTIDisplayHandler(BaseHandler):
         flash = tornado_flash.Flash(self)
         rti_db = self.application.db.rti        
         rti_doc = rti_db.find_one({'_id': ObjectId(rti_id)})
+        credits = self.get_secure_cookie('credits', None)
+        self.render('rti.html', rti_doc = rti_doc, credits=credits, flash=flash)
+
+
+class RandomRTIHandler(BaseHandler):
+    def get(self):
+        flash = tornado_flash.Flash(self)
+        rti_db = self.application.db.rti
+        rti_db_count = rti_db.count()
+
+        if rti_db_count < 1:
+            self.redirect('/')
+            return
+
+        randomnum = random.randint(1, rti_db_count)
+        rti_doc = rti_db.find().limit(-1).skip(randomnum).next()
         credits = self.get_secure_cookie('credits', None)
         self.render('rti.html', rti_doc = rti_doc, credits=credits, flash=flash)
 
