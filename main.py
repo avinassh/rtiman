@@ -20,6 +20,9 @@ from tornado.options import define, options
 import pymongo
 from pymongo import MongoClient
 
+#uses https://github.com/joerussbowman/tornado_flash
+import tornado_flash
+
 import settings
 from settings import MONGO_URL
 
@@ -57,10 +60,11 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class MainHandler(BaseHandler):
     def get(self):
+        flash = tornado_flash.Flash(self)
         rti_db = self.application.db.rti
         rti_doc = rti_db.find_one()
         credits = self.get_secure_cookie('credits', None)
-        self.render('index.html', credits=credits, rti=rti_doc)          
+        self.render('index.html', credits=credits, rti=rti_doc, flash=flash)          
 
 class UserHandler(BaseHandler):
     @tornado.web.authenticated
@@ -88,6 +92,7 @@ class AllRTIHandler(BaseHandler):
 class FundRTIHandler(BaseHandler):
     @tornado.web.authenticated    
     def get(self, rti_id):
+        flash = tornado_flash.Flash(self)
         credits = self.get_secure_cookie('credits', None)
         user_db = self.application.db.users    
         username = self.get_secure_cookie('rtiman')
@@ -99,10 +104,12 @@ class FundRTIHandler(BaseHandler):
             self.write('You are trying to fund an non existant RTI #FML')
             return
 
-        self.render('fund.html', rti_doc=rti_doc, user_doc=user_doc, credits=credits)
+        self.render('fund.html', rti_doc=rti_doc, user_doc=user_doc, credits=credits, flash=flash)
 
     def post(self, rti_id):
         credits = self.get_argument('credits', None)
+        password = self.get_argument('password', None)
+        passwordhash = hashlib.sha512(password).hexdigest()
         rti_db = self.application.db.rti
         user_db = self.application.db.users    
         username = self.get_secure_cookie('rtiman')
@@ -117,6 +124,13 @@ class FundRTIHandler(BaseHandler):
             credits = int(credits)
         except ValueError:
             self.write('Enter credits in numbers')
+            return
+
+        if user_doc['password'] != passwordhash:
+            flash = tornado_flash.Flash(self)
+            flash.data = {"class": "warning", "msg": "WARNING!"}
+            self.redirect(self.request.uri)
+            # self.write("Invalid password, try again!")
             return
 
         if credits > user_doc['credits']:
@@ -149,9 +163,11 @@ class NewRTIHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def get(self):
-        self.render('login.html')
+        flash = tornado_flash.Flash(self)
+        self.render('login.html', flash=flash)
 
     def post(self):
+        flash = tornado_flash.Flash(self)
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
         passwordhash = hashlib.sha512(password).hexdigest()
@@ -163,13 +179,17 @@ class LoginHandler(BaseHandler):
             return
             
         if user_doc['password'] != passwordhash:
-            self.write("Invalid password, <a href='/login'>try</a> again")
+            #self.write("Invalid password, <a href='/login'>try</a> again")
+            #return
+            flash.data = {"class": "danger", "msg": "Invalid password!"} 
+            self.redirect('/login')
             return
 
         # login successful
         credits = str(user_doc.get('credits', None))
         self.set_secure_cookie('rtiman', username)
-        self.set_secure_cookie('credits', credits)    
+        self.set_secure_cookie('credits', credits)
+        flash.data = {"class": "success", "msg": "Login successful!"}    
         self.redirect('/')
 
 
