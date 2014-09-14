@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1 id="welcome">Upload RTI Results</h1>
+<form class="form-horizontal">
+  <fieldset>
+    <div class="form-group">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-10">
+      <p>If you have received an RTI response, then you can share it with the world. We require users to upload the RTI response in text file, so that we can process and index it, making it search-friendly. Once approved, it will be available for anyone to search in RTI Man.</p>
+    </div>  
+  </div>
+    <div class="form-group">
+      <label for="password" class="col-lg-2 control-label">Password</label>
+      <div class="col-lg-10">
+        <input type="password" class="form-control" name="password" placeholder="Enter your password for account confirmation" required>
+      </div>
+    </div>    
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button type="reset" class="btn btn-default">Cancel</button>
+        <button type="submit" class="btn btn-primary" disabled>Browse</button>
+        <button type="submit" class="btn btn-primary" disabled>Submit</button>
+        <br />
+        <br />
+        <p class="alert alert-dismissable alert-danger">You do not have sufficient privileges to upload RTI Results.</p><br />
+      </div>
+    </div>
+  </fieldset>
+</form>
+{% end %}

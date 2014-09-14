@@ -48,7 +48,8 @@ class Application(tornado.web.Application):
             (r'/rti/(\w+)', RTIDisplayHandler),
             (r'/surprise', RandomRTIHandler),
             (r'/me', UserHandler),
-            (r'/addcredits', CreditsHandler)
+            (r'/addcredits', CreditsHandler),
+            (r'/upload', UploadHandler)
         ]
         app_settings = settings.application_handler_setttings
         conn = pymongo.MongoClient(MONGO_URL)
@@ -185,6 +186,13 @@ class CreditsHandler(BaseHandler):
         flash = tornado_flash.Flash(self)
         credits = self.get_secure_cookie('credits', None)
         self.render('credits.html', credits=credits, flash=flash)
+
+class UploadHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        flash = tornado_flash.Flash(self)
+        credits = self.get_secure_cookie('credits', None)
+        self.render('upload.html', credits=credits, flash=flash)        
 
 
 class NewRTIHandler(BaseHandler):
